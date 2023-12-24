@@ -19,38 +19,33 @@ import { Icons } from "./ui/icons";
 const components: { title: string; href: string; description: string }[] = [
   {
     title: "Class V",
-    href: "/docs/primitives/alert-dialog",
-    description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
+    href: "/results/5",
+    description: "Get Annual result of class V for Annual year 2023-24",
   },
   {
     title: "Class VI",
-    href: "/docs/primitives/hover-card",
-    description:
-      "For sighted users to preview content available behind a link.",
+    href: "/results/6",
+    description: "Get Annual result of class V for Annual year 2023-24",
   },
   {
     title: "Class VII",
-    href: "/docs/primitives/progress",
-    description:
-      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+    href: "/results/7",
+    description: "Get Annual result of class V for Annual year 2023-24",
   },
   {
     title: "Class VII",
-    href: "/docs/primitives/scroll-area",
-    description: "Visually or semantically separates content.",
+    href: "/results/8",
+    description: "Get Annual result of class V for Annual year 2023-24",
   },
   {
     title: "Class IX",
-    href: "/docs/primitives/tabs",
-    description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+    href: "/results/9",
+    description: "Get Annual result of class V for Annual year 2023-24",
   },
   {
     title: "Class X",
-    href: "/docs/primitives/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+    href: "/results/10",
+    description: "Get Annual result of class V for Annual year 2023-24",
   },
 ];
 
