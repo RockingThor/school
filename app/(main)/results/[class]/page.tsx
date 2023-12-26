@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Navbar } from "@/components/nav";
 
 interface PageProps {
   params: {
@@ -49,75 +50,83 @@ const Page = ({ params }: PageProps) => {
     console.log(data);
   };
   return (
-    <div className="flex items-center justify-center min-h-screen p-2">
-      <div className=" items-center justify-center inline-block border p-2 rounded-md">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="flex items-center justify-center space-x-2">
-              <FormField
-                control={form.control}
-                name="class"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Class</FormLabel>
-                    <FormControl>
-                      <Input placeholder="class" {...field} disabled />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="class"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Section</FormLabel>
-                    <FormControl>
-                      <Select>
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select Section" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectItem {...field} value="A">
-                              A
-                            </SelectItem>
-                            <SelectItem {...field} value="B">
-                              B
-                            </SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex items-center justify-center space-x-3">
-              <FormField
-                control={form.control}
-                name="rollNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center justify-center">
-                      <FormLabel>Roll No.</FormLabel>
+    <div className="">
+      <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+        <div className="flex items-center justify-center">{`Maniklal Singha Smrity Madhyamik Vidyalaya(HS)`}</div>
+      </div>
+      <div className="flex justify-center items-center">
+        <Navbar />
+      </div>
+      <div className="flex items-center justify-center mt-10 p-2">
+        <div className=" items-center justify-center inline-block border p-2 rounded-md">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="flex items-center justify-center space-x-2">
+                <FormField
+                  control={form.control}
+                  name="class"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Class</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Input your roll number"
-                          {...field}
-                        />
+                        <Input placeholder="class" {...field} disabled />
                       </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Submit</Button>
-            </div>
-          </form>
-        </Form>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="class"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Section</FormLabel>
+                      <FormControl>
+                        <Select>
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select Section" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem {...field} value="A">
+                                A
+                              </SelectItem>
+                              <SelectItem {...field} value="B">
+                                B
+                              </SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex items-center justify-center space-x-3">
+                <FormField
+                  control={form.control}
+                  name="rollNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-center">
+                        <FormLabel>Roll No.</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Input your roll number"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit">Submit</Button>
+              </div>
+            </form>
+          </Form>
+        </div>
       </div>
     </div>
   );

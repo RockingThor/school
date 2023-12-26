@@ -4,19 +4,15 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [domLoaded, setDomLoaded] = useState(false);
-
-  useEffect(() => {
-    setDomLoaded(true);
-  }, []);
   return (
     <div className="">
       <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
         <div className="flex items-center justify-center">{`Maniklal Singha Smrity Madhyamik Vidyalaya(HS)`}</div>
       </div>
-      <div className="flex items-center justify-center">
-        {domLoaded && <Navbar />}
+      <div className="flex justify-center items-center">
+        <Navbar />
       </div>
+      <div className="flex items-center justify-center"></div>
       <div className="flex">
         <div className="hidden md:block w-4/5">
           {/* <img src="your-image-source.jpg" alt="Your Image" class="w-full h-auto"> */}
