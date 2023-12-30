@@ -10,10 +10,7 @@ export const authOptions = {
     providers: [
         CredentialsProvider({
             name: "Credentials",
-            credentials: {
-                email: { label: "Email", type: "text", placeholder: "Email" },
-                password: { label: "Password", type: "password" },
-            },
+            credentials: {},
             async authorize(credentials: any, req: any) {
                 const apiUrl = "http://localhost:3000/api/signup";
                 const response = await axios.post(apiUrl, credentials);

@@ -18,11 +18,15 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import axios from "axios";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import Credentials from "next-auth/providers/credentials";
+import axios from "axios";
+import { routeModule } from "next/dist/build/templates/app-page";
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
+    loginForm?: string;
+}
 
 const formSchema = z.object({
     email: z.string().email({
@@ -49,7 +53,11 @@ const formSchema = z.object({
         ),
 });
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+export function UserAuthForm({
+    className,
+    loginForm,
+    ...props
+}: UserAuthFormProps) {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const router = useRouter();
 
@@ -63,14 +71,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
     async function onSubmit(data: z.infer<typeof formSchema>) {
         setIsLoading(true);
-        const apiUrl = "http://localhost:3000/api/signup";
-        const response = await axios.post(apiUrl, data);
-        setIsLoading(false);
-        if (response.status === 200) {
-            router.push("/admin/home");
-        } else {
-            console.log("User creation failed");
+        const res = await axios.post("/api/signup", data);
+        if (res.status == 200) {
+            router.push("/admin/login");
         }
+        setIsLoading(false);
     }
 
     async function handleSignIn() {
@@ -146,7 +151,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                         {isLoading && (
                             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        Sign Up with Email
+                        {loginForm
+                            ? "Login With Email & Password"
+                            : "Sign Up With Email & Password"}
                     </Button>
                 </form>
             </Form>
