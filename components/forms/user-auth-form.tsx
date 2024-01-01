@@ -78,8 +78,17 @@ export function UserAuthForm({
         setIsLoading(false);
     }
 
-    async function handleSignIn() {
-        await signIn("google");
+    async function handleSignIn(data: z.infer<typeof formSchema>) {
+        setIsLoading(true);
+        const res = await signIn("credentials", {
+            email: data.email,
+            password: data.password,
+            redirect: false,
+        });
+        if (res?.ok) {
+            router.push("/admin/home");
+        }
+        setIsLoading(false);
     }
 
     return (
@@ -89,7 +98,11 @@ export function UserAuthForm({
         >
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit(onSubmit)}
+                    onSubmit={
+                        loginForm
+                            ? form.handleSubmit(handleSignIn)
+                            : form.handleSubmit(onSubmit)
+                    }
                     className="space-y-8"
                 >
                     <FormField
@@ -171,7 +184,7 @@ export function UserAuthForm({
                 variant="outline"
                 type="button"
                 disabled={isLoading}
-                onClick={handleSignIn}
+                onClick={() => "Hello"}
             >
                 {isLoading ? (
                     <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

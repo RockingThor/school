@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/db/db";
 import axios from "axios";
+import { pages } from "next/dist/build/templates/app-page";
 
 export const authOptions = {
     adapter: PrismaAdapter(db),
@@ -12,13 +13,23 @@ export const authOptions = {
             name: "Credentials",
             credentials: {},
             async authorize(credentials: any, req: any) {
-                const apiUrl = "http://localhost:3000/api/signup";
-                const response = await axios.post(apiUrl, credentials);
-
-                const user = response.data;
-
-                if (response.status == 200 && user) {
-                    return user;
+                const { email, password } = credentials;
+                if (email && password) {
+                    //console.log("Was here");
+                    const response = await axios.post(
+                        "http://localhost:3000/api/signin",
+                        {
+                            email,
+                            password,
+                        }
+                    );
+                    //console.log(response);
+                    if (response.status === 200) {
+                        console.log(response);
+                        return response.data;
+                    }
+                } else {
+                    return null;
                 }
                 return null;
             },
@@ -29,6 +40,9 @@ export const authOptions = {
         }),
         // ...add more providers here
     ],
+    pages: {
+        signIn: "/admin/login",
+    },
 };
 
 const handler = NextAuth(authOptions);

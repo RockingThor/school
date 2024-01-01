@@ -9,25 +9,23 @@ export async function POST(req: Request) {
     try {
         const { email, password }: User = await req.json();
         if (!email || !password || password.length < 8) {
-            return new NextResponse("Bad  Request", { status: 400 });
+            return new NextResponse("Bad Request", { status: 400 });
         }
         const data = await db.user.findFirst({
             where: {
                 email,
             },
         });
-        if (data) {
-            return new NextResponse("User Already Exists", { status: 400 });
+        if (!data) {
+            return new NextResponse("No user exist with the mail", {
+                status: 400,
+            });
         }
-        const name = "ABC XYZ";
-        const server = await db.user.create({
-            data: {
-                email,
-                password,
-                name,
-            },
-        });
-        return new NextResponse(JSON.stringify(server), { status: 200 });
+        if (data?.password === password) {
+            return NextResponse.json(data);
+        } else {
+            return new NextResponse("Bad Request", { status: 400 });
+        }
     } catch (err) {
         console.log("[api/signup] Error: ", err);
         return new NextResponse("Internal Server Error", { status: 500 });
