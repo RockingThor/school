@@ -2,12 +2,13 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { db } from "@/db/db";
 import axios from "axios";
-import { pages } from "next/dist/build/templates/app-page";
+import { randomBytes, randomUUID } from "crypto";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 export const authOptions = {
-    adapter: PrismaAdapter(db),
+    adapter: PrismaAdapter(prisma),
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -25,8 +26,7 @@ export const authOptions = {
                     );
                     //console.log(response);
                     if (response.status === 200) {
-                        console.log(response);
-                        return response.data;
+                        return { id: response.data.id };
                     }
                 } else {
                     return null;
@@ -43,6 +43,14 @@ export const authOptions = {
     pages: {
         signIn: "/admin/login",
     },
+    // session: {
+    //     strategy: "database",
+    //     maxAge: 30 * 24 * 60 * 60,
+    //     updateAge: 24 * 60 * 60,
+    //     generateSessionToken: () => {
+    //         return randomUUID?.() ?? randomBytes(32).toString("hex");
+    //     },
+    // },
 };
 
 const handler = NextAuth(authOptions);

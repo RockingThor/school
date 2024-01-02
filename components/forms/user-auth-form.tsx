@@ -60,6 +60,9 @@ export function UserAuthForm({
 }: UserAuthFormProps) {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const router = useRouter();
+    const session = useSession();
+    console.log(session);
+    //router.push("/admin/home");
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
