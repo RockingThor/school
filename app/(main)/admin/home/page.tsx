@@ -7,9 +7,9 @@ import { useRouter } from "next/navigation";
 export default function SettingsProfilePage() {
     const { data: session } = useSession();
     const router = useRouter();
-    if (!session) {
-        router.push("/admin/signup");
-    }
+    // if (!session) {
+    //     router.push("/admin/signup");
+    // }
     return (
         <div className="space-y-6">
             <div>

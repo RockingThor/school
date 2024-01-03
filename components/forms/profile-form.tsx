@@ -26,6 +26,10 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
+import axios from "axios";
+import { useRecoilState } from "recoil";
+import { userState } from "@/recoil/atoms/atoms";
+import { URL } from "@/lib/const";
 
 const profileFormSchema = z.object({
     username: z
@@ -55,7 +59,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 // This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {
-    bio: "I own a computer.",
+    bio: "This is your school's bio",
     urls: [
         { value: "https://shadcn.com" },
         { value: "http://twitter.com/shadcn" },
@@ -63,12 +67,28 @@ const defaultValues: Partial<ProfileFormValues> = {
 };
 
 export function ProfileForm() {
+    const [user, setUser] = useRecoilState(userState);
+    const id = "clqusca2w0000wvtf7y10i01u";
+    const getData = async () => {
+        const data = await axios.post(`${URL}/api/profile`, {
+            id,
+        });
+        setUser(data?.data);
+    };
+    if (user.id === "") {
+        getData();
+    }
     const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileFormSchema),
-        defaultValues,
+        defaultValues: {
+            username: user.username || undefined,
+            email: user.email || undefined,
+            bio: user.bio || undefined,
+            urls: defaultValues.urls || undefined,
+        },
         mode: "onChange",
     });
-
+    console.log(user);
     const { fields, append } = useFieldArray({
         name: "urls",
         control: form.control,

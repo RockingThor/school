@@ -2,7 +2,11 @@ import AuthenticationPage from "@/components/auth";
 import React from "react";
 
 const Page = () => {
-    return <AuthenticationPage />;
+    return (
+        <div>
+            <AuthenticationPage />
+        </div>
+    );
 };
 
 export default Page;

@@ -1,12 +1,19 @@
-import { School, User } from "@/lib/interfaces";
+import { School } from "@/lib/interfaces";
+import { User } from "@prisma/client";
 import { atom } from "recoil";
 
 export const userState = atom<User>({
     key: "userState",
     default: {
-        id: -1,
+        id: "",
         name: "",
         email: "",
+        password: "",
+        schoolName: null,
+        bio: null,
+        username: null,
+        emailVerified: null,
+        image: null,
     },
 });
 
