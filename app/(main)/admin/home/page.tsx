@@ -3,6 +3,7 @@ import { Separator } from "@/components/separator";
 import { ProfileForm } from "@/components/forms/profile-form";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function SettingsProfilePage() {
     const { data: session } = useSession();
@@ -19,6 +20,7 @@ export default function SettingsProfilePage() {
                 </p>
             </div>
             <Separator />
+
             <ProfileForm />
         </div>
     );

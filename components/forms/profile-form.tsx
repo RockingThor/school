@@ -30,6 +30,7 @@ import axios from "axios";
 import { useRecoilState } from "recoil";
 import { userState } from "@/recoil/atoms/atoms";
 import { URL } from "@/lib/const";
+import { useRouter } from "next/navigation";
 
 const profileFormSchema = z.object({
     username: z
@@ -69,6 +70,8 @@ const defaultValues: Partial<ProfileFormValues> = {
 export function ProfileForm() {
     const [user, setUser] = useRecoilState(userState);
     const id = "clqusca2w0000wvtf7y10i01u";
+
+    const router = useRouter();
     const getData = async () => {
         const data = await axios.post(`${URL}/api/profile`, {
             id,
@@ -88,23 +91,43 @@ export function ProfileForm() {
         },
         mode: "onChange",
     });
-    console.log(user);
     const { fields, append } = useFieldArray({
         name: "urls",
         control: form.control,
     });
 
-    function onSubmit(data: ProfileFormValues) {
-        toast({
-            title: "You submitted the following values:",
-            description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                    <code className="text-white">
-                        {JSON.stringify(data, null, 2)}
-                    </code>
-                </pre>
-            ),
+    async function onSubmit(data: ProfileFormValues) {
+        // toast({
+        //     title: "You submitted the following values:",
+        //     description: (
+        //         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+        //             <code className="text-white">
+        //                 {JSON.stringify(data, null, 2)}
+        //             </code>
+        //         </pre>
+        //     ),
+        // });
+        const res = await axios.put(`${URL}/api/profile`, {
+            ...user,
+            username: data.username,
+            bio: data.bio,
+            email: data.email,
         });
+        if (res.status == 200) {
+            setUser({
+                ...user,
+                username: data.username,
+                bio: data.bio,
+                email: data.email,
+            });
+            router.push("/admin/profile");
+        } else {
+            toast({
+                title: "Error",
+                description: "Something went wrong",
+                variant: "destructive",
+            });
+        }
     }
 
     return (
@@ -121,7 +144,7 @@ export function ProfileForm() {
                             <FormLabel>Username</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="shadcn"
+                                    placeholder="rohitx"
                                     {...field}
                                 />
                             </FormControl>
@@ -150,8 +173,10 @@ export function ProfileForm() {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="m@example.com">
-                                        m@example.com
+                                    <SelectItem
+                                        value={user.email || "x@gmail.com"}
+                                    >
+                                        {user.email || "x@gmail.com"}
                                     </SelectItem>
                                     <SelectItem value="m@google.com">
                                         m@google.com
@@ -180,7 +205,7 @@ export function ProfileForm() {
                             <FormLabel>Bio</FormLabel>
                             <FormControl>
                                 <Textarea
-                                    placeholder="Tell us a little bit about yourself"
+                                    placeholder="Tell us a little bit about your school"
                                     className="resize-none"
                                     {...field}
                                 />
