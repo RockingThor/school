@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -39,7 +39,11 @@ const formSchema2 = z.object({
 });
 
 const Page = () => {
-    const [subjectForm, setSubjectForm] = useState<number[]>([]);
+    const [subjectForm, setSubjectForm] = useState<string[]>([]);
+    const [subjectCount, setSubjectCount] = useState(0);
+    const [subjectsRemain, setSubjectRemain] = useState(0);
+    const [isDisabledSubject, setIsDisabledSubject] = useState(true);
+    const [isSubjectAreaActive, setIsSubjectAreaActive] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -48,6 +52,14 @@ const Page = () => {
             totalStudent: "",
         },
     });
+    useEffect(() => {
+        if (subjectsRemain <= 0) {
+            setIsDisabledSubject(true);
+        } else {
+            setIsDisabledSubject(false);
+        }
+    }, [subjectsRemain]);
+
     const form2 = useForm<z.infer<typeof formSchema2>>({
         resolver: zodResolver(formSchema2),
         defaultValues: {
@@ -57,15 +69,21 @@ const Page = () => {
     function onSubmitInitialValues(data: z.infer<typeof formSchema>) {
         const { classNo, totalSubject, totalStudent } = data;
         let subjects: number = parseInt(totalSubject);
-        let temp: number[] = [];
-        for (let i = 1; i <= subjects; i++) {
-            temp.push(i);
-        }
-        setSubjectForm(temp);
+        setSubjectCount(subjects);
+        setIsSubjectAreaActive(true);
+        setSubjectRemain(subjects);
         let students: number = parseInt(totalStudent);
         let currentClass: number = parseInt(classNo);
         const resultStructure = {};
     }
+
+    function onSubmitForm2(data: z.infer<typeof formSchema2>) {
+        const { subjectName } = data;
+        setSubjectForm([...subjectForm, subjectName]);
+        setSubjectRemain(subjectsRemain - 1);
+        form2.reset();
+    }
+
     return (
         <div>
             <div className="flex justify-center">
@@ -134,47 +152,74 @@ const Page = () => {
                     </form>
                 </Form>
             </div>
-            <div className="flex">
-                <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm"></div>
-            </div>
-            <div className="flex">
-                <div className="">
-                    <Form {...form}>
-                        <form
-                            onSubmit={form.handleSubmit(onSubmitInitialValues)}
-                            className="space-y-8"
-                        >
-                            <div className="flex space-x-8">
-                                <FormField
-                                    control={form2.control}
-                                    name="subjectName"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Subject Name</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Enter Class"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormDescription></FormDescription>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <div className="mt-8">
-                                    <Button type="submit">Submit</Button>
+            {isSubjectAreaActive && (
+                <div>
+                    {
+                        <div className="flex justify-center items-center">
+                            <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm m-2">
+                                Subjects you have entered:{" "}
+                            </div>
+                            {subjectForm.map((subject) => (
+                                <div
+                                    key={subject}
+                                    className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm m-1"
+                                >
+                                    {subject}
+                                </div>
+                            ))}
+                        </div>
+                    }
+                    <div className="flex justify-center items-center">
+                        <div className="">
+                            <Form {...form2}>
+                                <form
+                                    onSubmit={form2.handleSubmit(onSubmitForm2)}
+                                    className="space-y-8"
+                                >
+                                    <div className="flex space-x-8">
+                                        <FormField
+                                            control={form2.control}
+                                            name="subjectName"
+                                            disabled={isDisabledSubject}
+                                            render={({ field }) => (
+                                                <FormItem className="flex">
+                                                    <FormLabel className="mt-4">
+                                                        Subject Name
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            placeholder="Enter subject"
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+                                                    <FormDescription></FormDescription>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <div className="mt-2">
+                                            <Button
+                                                disabled={isDisabledSubject}
+                                                type="submit"
+                                            >
+                                                Submit
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </Form>
+                        </div>
+                        {!isDisabledSubject && (
+                            <div className="mt-2 p-4">
+                                <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+                                    Please Enter {subjectsRemain} more subjects
+                                    to proceed.
                                 </div>
                             </div>
-                        </form>
-                    </Form>
-                </div>
-                <div className="">
-                    <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
-                        Please Enter {} more subjects to proceed.
+                        )}
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };
