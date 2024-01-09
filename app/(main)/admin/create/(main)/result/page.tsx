@@ -44,6 +44,7 @@ const Page = () => {
     const [subjectsRemain, setSubjectRemain] = useState(0);
     const [isDisabledSubject, setIsDisabledSubject] = useState(true);
     const [isSubjectAreaActive, setIsSubjectAreaActive] = useState(false);
+    const [isFinalAreaActive, setIsFinalAreaActive] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -55,6 +56,7 @@ const Page = () => {
     useEffect(() => {
         if (subjectsRemain <= 0) {
             setIsDisabledSubject(true);
+            setIsFinalAreaActive(true);
         } else {
             setIsDisabledSubject(false);
         }
@@ -83,6 +85,10 @@ const Page = () => {
         setSubjectRemain(subjectsRemain - 1);
         form2.reset();
     }
+
+    const finalSubmit = () => {
+        console.log("Okkies");
+    };
 
     return (
         <div>
@@ -218,6 +224,16 @@ const Page = () => {
                             </div>
                         )}
                     </div>
+                </div>
+            )}
+            {isFinalAreaActive && (
+                <div className="flex justify-center items-center mt-16">
+                    <Button
+                        type="submit"
+                        onClick={finalSubmit}
+                    >
+                        Generate Form To Enter Result Data
+                    </Button>
                 </div>
             )}
         </div>
