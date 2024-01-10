@@ -15,6 +15,14 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
+
+interface Sample {
+    roll: number;
+    name?: string;
+    numbers?: string[];
+    subjects?: string[];
+}
 
 const formSchema = z.object({
     classNo: z
@@ -39,12 +47,15 @@ const formSchema2 = z.object({
 });
 
 const Page = () => {
+    const router = useRouter();
     const [subjectForm, setSubjectForm] = useState<string[]>([]);
+    const [sampleData, setSampleData] = useState<Sample[]>([]);
     const [subjectCount, setSubjectCount] = useState(0);
     const [subjectsRemain, setSubjectRemain] = useState(0);
     const [isDisabledSubject, setIsDisabledSubject] = useState(true);
     const [isSubjectAreaActive, setIsSubjectAreaActive] = useState(false);
     const [isFinalAreaActive, setIsFinalAreaActive] = useState(false);
+    const [noOfStudents, setNoOfStudents] = useState(0);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -75,6 +86,7 @@ const Page = () => {
         setIsSubjectAreaActive(true);
         setSubjectRemain(subjects);
         let students: number = parseInt(totalStudent);
+        setNoOfStudents(students);
         let currentClass: number = parseInt(classNo);
         const resultStructure = {};
     }
@@ -83,6 +95,11 @@ const Page = () => {
         const { subjectName } = data;
         setSubjectForm([...subjectForm, subjectName]);
         setSubjectRemain(subjectsRemain - 1);
+        let sample: Sample[] = [];
+        for (let i = 1; i <= noOfStudents; i++) {
+            sample.push({ roll: i });
+        }
+        setSampleData(sample);
         form2.reset();
     }
 
