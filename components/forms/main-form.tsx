@@ -42,10 +42,9 @@ const MainForm = ({
             <div className="p-2">
                 {" "}
                 <div className="flex justify-center items-center text-xl">
-                    Input {"Student's"} Details
+                    Input {"Student's"} Details for Class {classNo}-{section}
                 </div>
-                <Table>
-                    <TableCaption>A list of your recent invoices.</TableCaption>
+                <Table className="mt-4   border-2 rounded-md border-black">
                     <TableHeader>
                         <TableRow>
                             <TableHead>Roll</TableHead>
@@ -60,6 +59,14 @@ const MainForm = ({
                             <TableRow key={data.roll}>
                                 <TableCell className="font-medium">
                                     {data.roll}
+                                </TableCell>
+                                <TableCell className="font-medium">
+                                    <Input
+                                        placeholder="Enter Name"
+                                        onChange={(e) =>
+                                            (data.name = e.target.value)
+                                        }
+                                    />
                                 </TableCell>
                                 {subjects.map((subject, i) => (
                                     <TableCell key={subject}>
@@ -79,14 +86,7 @@ const MainForm = ({
                             </TableRow>
                         ))}
                     </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TableCell colSpan={3}>Total</TableCell>
-                            <TableCell className="text-right">
-                                $2,500.00
-                            </TableCell>
-                        </TableRow>
-                    </TableFooter>
+                    <TableFooter></TableFooter>
                 </Table>
             </div>
         </div>

@@ -16,12 +16,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import MainForm from "@/components/forms/main-form";
 
 interface Sample {
     roll: number;
     name?: string;
     numbers?: string[];
     subjects?: string[];
+    obtained: number[];
 }
 
 const formSchema = z.object({
@@ -37,6 +39,10 @@ const formSchema = z.object({
         .string()
         .min(1, { message: "Please select a total student." })
         .max(3, { message: "Please select a valid total student." }),
+    section: z
+        .string()
+        .min(1, { message: "Please select a section." })
+        .max(2, { message: "Please enter a valid section." }),
 });
 
 const formSchema2 = z.object({
@@ -56,12 +62,16 @@ const Page = () => {
     const [isSubjectAreaActive, setIsSubjectAreaActive] = useState(false);
     const [isFinalAreaActive, setIsFinalAreaActive] = useState(false);
     const [noOfStudents, setNoOfStudents] = useState(0);
+    const [firstSection, setFirstSection] = useState(true);
+    const [currentClass, setCurrentClass] = useState(0);
+    const [currentSection, setCurrentSection] = useState("");
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             classNo: "",
             totalSubject: "",
             totalStudent: "",
+            section: "",
         },
     });
     useEffect(() => {
@@ -80,8 +90,10 @@ const Page = () => {
         },
     });
     function onSubmitInitialValues(data: z.infer<typeof formSchema>) {
-        const { classNo, totalSubject, totalStudent } = data;
+        const { classNo, totalSubject, totalStudent, section } = data;
         let subjects: number = parseInt(totalSubject);
+        setCurrentClass(parseInt(classNo));
+        setCurrentSection(section);
         setSubjectCount(subjects);
         setIsSubjectAreaActive(true);
         setSubjectRemain(subjects);
@@ -97,160 +109,203 @@ const Page = () => {
         setSubjectRemain(subjectsRemain - 1);
         let sample: Sample[] = [];
         for (let i = 1; i <= noOfStudents; i++) {
-            sample.push({ roll: i });
+            sample.push({ roll: i, obtained: [] });
         }
         setSampleData(sample);
         form2.reset();
     }
 
     const finalSubmit = () => {
-        console.log("Okkies");
+        setFirstSection(false);
     };
 
     return (
         <div>
-            <div className="flex justify-center">
-                <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(onSubmitInitialValues)}
-                        className="space-y-8"
-                    >
-                        <div className="flex space-x-8">
-                            <FormField
-                                control={form.control}
-                                name="classNo"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Class</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Enter Class"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormDescription></FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
+            {firstSection && (
+                <div className="">
+                    <div className="flex justify-center">
+                        <Form {...form}>
+                            <form
+                                onSubmit={form.handleSubmit(
+                                    onSubmitInitialValues
                                 )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="totalSubject"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Total Subjects</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Enter subject count"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormDescription></FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="totalStudent"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Total Students</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Enter student count"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormDescription></FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            {}
-                            <div className="mt-8">
-                                <Button type="submit">Submit</Button>
-                            </div>
-                        </div>
-                    </form>
-                </Form>
-            </div>
-            {isSubjectAreaActive && (
-                <div>
-                    {
-                        <div className="flex justify-center items-center">
-                            <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm m-2">
-                                Subjects you have entered:{" "}
-                            </div>
-                            {subjectForm.map((subject) => (
-                                <div
-                                    key={subject}
-                                    className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm m-1"
-                                >
-                                    {subject}
+                                className="space-y-8"
+                            >
+                                <div className="flex space-x-8">
+                                    <FormField
+                                        control={form.control}
+                                        name="classNo"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Class</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Enter Class"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormDescription></FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="totalSubject"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Total Subjects
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Enter subject count"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormDescription></FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="totalStudent"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Total Students
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Enter student count"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormDescription></FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="section"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Section</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Enter section"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormDescription></FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    {}
+                                    <div className="mt-8">
+                                        <Button type="submit">Submit</Button>
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
-                    }
-                    <div className="flex justify-center items-center">
-                        <div className="">
-                            <Form {...form2}>
-                                <form
-                                    onSubmit={form2.handleSubmit(onSubmitForm2)}
-                                    className="space-y-8"
-                                >
-                                    <div className="flex space-x-8">
-                                        <FormField
-                                            control={form2.control}
-                                            name="subjectName"
-                                            disabled={isDisabledSubject}
-                                            render={({ field }) => (
-                                                <FormItem className="flex">
-                                                    <FormLabel className="mt-4">
-                                                        Subject Name
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            placeholder="Enter subject"
-                                                            {...field}
-                                                        />
-                                                    </FormControl>
-                                                    <FormDescription></FormDescription>
-                                                    <FormMessage />
-                                                </FormItem>
+                            </form>
+                        </Form>
+                    </div>
+                    {isSubjectAreaActive && (
+                        <div>
+                            {
+                                <div className="flex justify-center items-center">
+                                    <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm m-2">
+                                        Subjects you have entered:{" "}
+                                    </div>
+                                    {subjectForm.map((subject) => (
+                                        <div
+                                            key={subject}
+                                            className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm m-1"
+                                        >
+                                            {subject}
+                                        </div>
+                                    ))}
+                                </div>
+                            }
+                            <div className="flex justify-center items-center">
+                                <div className="">
+                                    <Form {...form2}>
+                                        <form
+                                            onSubmit={form2.handleSubmit(
+                                                onSubmitForm2
                                             )}
-                                        />
-                                        <div className="mt-2">
-                                            <Button
-                                                disabled={isDisabledSubject}
-                                                type="submit"
-                                            >
-                                                Submit
-                                            </Button>
+                                            className="space-y-8"
+                                        >
+                                            <div className="flex space-x-8">
+                                                <FormField
+                                                    control={form2.control}
+                                                    name="subjectName"
+                                                    disabled={isDisabledSubject}
+                                                    render={({ field }) => (
+                                                        <FormItem className="flex">
+                                                            <FormLabel className="mt-4">
+                                                                Subject Name
+                                                            </FormLabel>
+                                                            <FormControl>
+                                                                <Input
+                                                                    placeholder="Enter subject"
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormDescription></FormDescription>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <div className="mt-2">
+                                                    <Button
+                                                        disabled={
+                                                            isDisabledSubject
+                                                        }
+                                                        type="submit"
+                                                    >
+                                                        Submit
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </Form>
+                                </div>
+                                {!isDisabledSubject && (
+                                    <div className="mt-2 p-4">
+                                        <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+                                            Please Enter {subjectsRemain} more
+                                            subjects to proceed.
                                         </div>
                                     </div>
-                                </form>
-                            </Form>
-                        </div>
-                        {!isDisabledSubject && (
-                            <div className="mt-2 p-4">
-                                <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
-                                    Please Enter {subjectsRemain} more subjects
-                                    to proceed.
-                                </div>
+                                )}
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
+                    {isFinalAreaActive && (
+                        <div className="flex justify-center items-center mt-16">
+                            <Button
+                                type="submit"
+                                onClick={finalSubmit}
+                            >
+                                Generate Form To Enter Result Data
+                            </Button>
+                        </div>
+                    )}
                 </div>
             )}
-            {isFinalAreaActive && (
-                <div className="flex justify-center items-center mt-16">
-                    <Button
-                        type="submit"
-                        onClick={finalSubmit}
-                    >
-                        Generate Form To Enter Result Data
-                    </Button>
+            {!firstSection && (
+                <div className="flex justify-center">
+                    <MainForm
+                        classNo={currentClass}
+                        section={currentSection}
+                        subjectCount={subjectCount}
+                        students={noOfStudents}
+                        subjects={subjectForm}
+                        sampleData={sampleData}
+                    />
                 </div>
             )}
         </div>
